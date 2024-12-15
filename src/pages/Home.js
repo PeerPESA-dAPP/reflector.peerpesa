@@ -3,27 +3,33 @@ import '../styles/MainSection.css';
 import Header from '../components/Header';
 import HeroSection from '../components/HeroSection';
 import {getAvailableReflectorTickers} from '@reflector/subscription-client'
+import { Server, Keypair, TransactionBuilder, BASE_FEE, Networks, Operation } from 'stellar-sdk';
+import StellarSdk from 'stellar-sdk';
+
+
+
+const Stellar_Pubnet_Testnet   = 'CAVLP5DH2GJPZMVO7IJY4CVOD5MWEFTJFVPD2YY2FQXOQHRGHK4D6HLP';
+const CEX_DEX_Testnet = 'CCYOZJCOPG34LLQQ7N24YXBM7LL62R7ONMZ3G6WZAAYPB5OYKOMJRN63';
+
 // import SubscriptionClient from '@reflector/subscription-client'
 // import {Keypair, Networks, TransactionBuilder} from '@stellar/stellar-sdk'
-import { Server, Keypair, TransactionBuilder, BASE_FEE, Networks, Operation } from 'stellar-sdk';
-
+const priceAPIUrl = 'https://api.reflector.network/price';
+const server      = new Server('https://horizon-testnet.stellar.org'); // Use Server instead of StellarSdk.Server
+      
 
 function Home() {
+
   const [stellarSkd, SetStellarSkd] = useState("");
   const [walletDetails, SetWalletDetails] = useState("");
-
-
-
-
   const createAccount = async () => {
     try {
 
       const pair = Keypair.random(); // Group's keypair
       SetWalletDetails(pair);
-      
-      console.log("Wallet details:", pair);
       console.log("Public Key:", pair.publicKey());
       console.log("Secret Key:", pair.secret());
+      await fundAccount(pair);
+
       return pair;
     } catch (error) {
       console.error("Error creating group account:", error);
@@ -50,7 +56,7 @@ function Home() {
   // Example of creating a transaction and submitting it to Stellar network
   const createTransaction = async (sourceSecretKey, destinationPublicKey, amount) => {
     try {
-      const server = new Server('https://horizon-testnet.stellar.org'); // Use Server instead of StellarSdk.Server
+      
       const sourceKeypair = Keypair.fromSecret(sourceSecretKey);
       const account = await server.loadAccount(sourceKeypair.publicKey());
   
@@ -78,16 +84,20 @@ function Home() {
   };
 
   useEffect(() => {
+
     const initRun = async () =>{
       const pubnetTickers = await getAvailableReflectorTickers('pubnet')
       const externalTickers = await getAvailableReflectorTickers('exchanges')
-      console.log(pubnetTickers)
-      console.log("-------------------1----------------")
-      console.log(externalTickers)
-      console.log("------------------2-----------------")
+      //console.log(pubnetTickers)
+      //console.log("-------------------1----------------")
+      //console.log(externalTickers)
+      //console.log("------------------2-----------------")
     }
+    
     initRun()
-    createAccount();
+    //createAccount();
+    fetchPrice();
+
   }, []);
 
 
@@ -114,6 +124,61 @@ function Home() {
       await server.submitTransaction(transaction);
       console.log("Multisig account setup completed successfully.");
   };
+
+
+
+
+
+
+  async function fetchPrice() {
+    try {
+
+      // Your Stellar secret key (keep it secure, do NOT expose in production)
+      const sourceSecret    = 'SA7BHFVQSSNMF6FL4LOP22KMJCGRBQJ5NS77V7AHNL4GQTC6SNVX7GVW'; // Replace with your actual secret key
+      const sourceAccount   = Keypair.fromSecret(sourceSecret);
+
+      //const server        = new Server('https://horizon-testnet.stellar.org');
+      //const accountx      = await server.loadAccount(sourceAccount.publicKey());
+      console.log('Balances:', sourceAccount.publicKey());
+      return;
+
+      // // Reflector contract address (replace with the actual Reflector contract address)
+      // const reflectorContractAddress = Stellar_Pubnet_Testnet; // Replace with actual address
+
+      // // Token or asset associated with Reflector contract (replace with the actual asset details)
+      // const asset = new StellarSdk.Asset('USDC', reflectorContractAddress); // Assuming XRF token
+
+      // // Load the source account from the Stellar server
+      // const account = await server.loadAccount(sourceAccount.publicKey());
+
+      // // Create the transaction to interact with the Reflector contract
+      // const transaction = new StellarSdk.TransactionBuilder(account, {
+      //     fee: StellarSdk.BASE_FEE,
+      //     networkPassphrase: StellarSdk.Networks.PUBLIC, // Replace with 'TESTNET' for Testnet
+      // })
+      //     // Example: Adding a payment operation (replace with correct operation for the contract)
+      //   .addOperation(
+      //         StellarSdk.Operation.payment({
+      //             destination: reflectorContractAddress,
+      //             asset: asset,
+      //             amount: '1', // Sending 1 XRF (adjust based on the contract logic)
+      //         })
+      //   )
+      //   .setTimeout(30) // Set the timeout for the transaction
+      //   .build();
+
+      // // Sign the transaction with the source account
+      // transaction.sign(sourceAccount);
+
+      // // Submit the transaction to the Stellar network
+      // const result = await server.submitTransaction(transaction);
+      // console.log('Transaction successful:', result);
+
+  } catch (error) {
+      console.error('Error interacting with Reflector contract:', error);
+  }
+}
+
 
     
   //   //callback for signing generated trasnactions
