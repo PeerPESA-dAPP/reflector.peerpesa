@@ -16,6 +16,8 @@
 
   .card-login {
     background-color: #f0fff4;
+    background:  transparent;
+    background:  transparent;
     padding: 2rem;
     border-radius: 15px 15px 0 0;
   }
@@ -60,7 +62,7 @@
 
 .title {
 
-  font-size:   2.8rem;
+  font-size:   2.3rem;
   color:     #1E1E1E; 
   text-align:  left; 
   padding:     10px 0;    
@@ -69,8 +71,12 @@
   text-align:  center; 
 }
 .highlight {
+  color: #00a86b; 
+  color: rgb(110,231,150);
+  color: #ffffff;   
+  color: rgba(147,149,152, 1);
   color: #00a86b;
-  color: #ffffff;    
+  color:     #1E1E1E; 
   font-weight: bold;
   text-align: left;
 }
@@ -89,6 +95,7 @@
 
   .card {
     background-color: #f0fff4;
+    background:  transparent;
     padding: 1rem;
     border-radius: 15px;
   }
@@ -115,7 +122,7 @@
   line-height: auto;    
   text-align:  left; 
   padding:     10px 10%;
-  font-weight: 600;   
+  font-weight: 300;   
   text-align:  center; 
 }
 
